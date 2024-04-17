@@ -1,3 +1,4 @@
+import { fullPathRedirect, rewriteRedirects } from '@nuxtjs/auth/lib/module/defaults'
 import colors from 'vuetify/es5/util/colors'
 
 export default {
@@ -28,6 +29,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '@/plugins/ui-components.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -55,7 +57,6 @@ export default {
   auth: {
     redirect: {
       login: '/login',
-      logout: '/',
       callback: '/',
       home: '/'
     },
@@ -74,8 +75,10 @@ export default {
         endpoints: {
           login: { url: '/login', method: 'post' },
           logout: { url: '/logout', method: 'post' },
-          user: { url: '/user', method: 'get' }
-        }
+          user: false
+        },
+        rewriteRedirects: true,
+        fullPathRedirect: true,
       }
     }
   },
@@ -83,14 +86,14 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: '/'
+    baseURL: 'http://localhost:5010/'
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
-      dark: true,
+      dark: false,
       themes: {
         dark: {
           primary: colors.blue.darken2,
