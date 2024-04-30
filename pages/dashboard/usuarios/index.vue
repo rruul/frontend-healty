@@ -1,13 +1,117 @@
 <template>
+  <v-col cols="12">
     <v-row>
-      Aqui va la tabla
+      <v-btn block color="#123CCC" @click="showDialog = true">
+        <span style="text-transform: none; color: white;">
+          Usuario Nuevo
+        </span>
+      </v-btn>
     </v-row>
-  </template>
+    <v-row>
+      <v-data-table
+        :headers="headers"
+        :items="usuarios"
+      >
+        <template #[`item.email`]="{item}">
+          <span style="font-weight: 800;">
+            {{ item.email }}
+          </span>
+        </template>
+        <template #[`item.acciones`]="{item}">
+          <v-row>
+            <v-col cols="6">
+              <v-btn icon color="red" @click="deleteUser(item)">
+                <v-icon>mdi-trash-can</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="6">
+              <v-btn icon color="warning" @click="updateUser(item)">
+                <v-icon>mdi-account</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </template>
+      </v-data-table>
+    </v-row>
+    <v-dialog
+      v-model="showDialog"
+      persitent
+      width="500"
+      transition="dialog-bottom-transition"
+    >
+      <v-card>
+        <v-card-title>Agregar Usuario</v-card-title>
+        <v-card-text>
+          <v-row width="100%">
+            <v-text-field
+              v-model="email"
+              class="pa-2 ma-2"
+              label="correo"
+              placeholder="Escribe tu correo"
+              outlined
+            />
+          </v-row>
+          <v-row width="100%">
+            <v-text-field
+              v-model="password"
+              class="pa-2 ma-2"
+              label="Password"
+              placeholder="Escribe tu Password"
+              outlined
+              type="password"
+            />
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-col cols="6">
+            <v-btn block color="green" @click="registrarUsuario">
+              <span style="text-transform: none; color:white;">Registrar</span>
+            </v-btn>
+          </v-col>
+          <v-col cols="6">
+            <v-btn block color="red" @click="showDialog = false">
+              <span style="text-transform: none; color:white;">Cancelar</span>
+            </v-btn>
+          </v-col>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-col>
+</template>
+
 <script>
 import { mapState } from 'vuex'
 export default {
   layout: 'dashboard',
-  auth: false,
+  auth: true,
+  data () {
+    return {
+      usuarios: [],
+      headers: [
+        {
+          text: 'Email',
+          value: 'email',
+          align: 'center',
+          sortable: true
+        },
+        {
+          text: 'Password',
+          value: 'password',
+          align: 'center',
+          sortable: true
+        },
+        {
+          text: 'Acciones',
+          value: 'acciones',
+          align: 'center'
+        }
+      ],
+      showDialog: false,
+      email: null,
+      password: null,
+      userToDelete: false
+    }
+  },
   computed: {
     ...mapState({
       token: state => state.token
@@ -18,18 +122,34 @@ export default {
   },
   methods: {
     obtenerUsuarios () {
-      const url = process.env.URL_BASE + '/get-all-users'
-      const config = {
-        Headers: {
-          Authorization: `Bearer ${this.token}`
-        }
-      }
-      this.$axios.get(url, config)
+      const url = '/get-all-users'
+      this.$axios.get(url)
         .then((res) => {
-          console.log('Usuarios: ', res.data)
+          console.log('Response ', res)
+          if (res.data.message === 'success') {
+            this.usuarios = res.data.users
+          }
         })
         .catch((err) => {
           console.log('Error: ', err)
+        })
+    },
+    registrarUsuario () {
+      const url = '/register'
+      const data = {
+        email: this.email,
+        password: this.password
+      }
+      this.$axios.post(url, data)
+        .then((res) => {
+          console.log('res =>', res)
+          if (res.data.message === 'User created successfully') {
+            this.showDialog = false
+            this.obtenerUsuarios()
+          }
+        })
+        .catch((err) => {
+          console.log('err =>', err)
         })
     }
   }
