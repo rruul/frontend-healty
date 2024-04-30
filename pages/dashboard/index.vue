@@ -1,5 +1,7 @@
 <template>
-  <div />
+  <div>
+    Awui va la tabal
+  </div>
 </template>
 
 <script>
