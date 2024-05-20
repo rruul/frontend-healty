@@ -44,6 +44,51 @@
         <v-card-text>
           <v-row width="100%">
             <v-text-field
+              v-model="nombre"
+              class="pa-2 ma-2"
+              label="Nombre"
+              placeholder="Escribe tu nombre"
+              outlined
+            />
+          </v-row>
+          <v-row width="100%">
+            <v-text-field
+              v-model="apaterno"
+              class="pa-2 ma-2"
+              label="Apellido Paterno"
+              placeholder="Escribe tu apellido paterno"
+              outlined
+            />
+          </v-row>
+          <v-row width="100%">
+            <v-text-field
+              v-model="amaterno"
+              class="pa-2 ma-2"
+              label="Apellido Materno"
+              placeholder="Escribe tu apellido materno"
+              outlined
+            />
+          </v-row>
+          <v-row width="100%">
+            <v-text-field
+              v-model="direccion"
+              class="pa-2 ma-2"
+              label="Direccion"
+              placeholder="Escribe tu direccion"
+              outlined
+            />
+          </v-row>
+          <v-row width="100%">
+            <v-text-field
+              v-model="telefono"
+              class="pa-2 ma-2"
+              label="Telefono"
+              placeholder="Escribe tu telefono"
+              outlined
+            />
+          </v-row>
+          <v-row width="100%">
+            <v-text-field
               v-model="email"
               class="pa-2 ma-2"
               label="correo"
@@ -76,6 +121,116 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="showDelete">
+      <v-card>
+        <v-card-title>Delete User</v-card-title>
+        <v-card-text>Are you sure?</v-card-text>
+        <v-card-actions>
+         <v-col cols="6">
+          <v-btn block color="green" @click="borrarUsuario">
+            <span style="text-transform: none; color: white;">
+              Borrar
+            </span>
+          </v-btn>
+         </v-col>
+         <v-col cols="6">
+          <v-btn block color="red" @click="showDelete = false">
+            <span style="text-transform: none; color:white;">
+              Cancelar
+            </span>
+          </v-btn>
+         </v-col>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="showUpdate"
+      persitent
+      width="500"
+      transition="dialog-bottom-transition"
+    >
+      <v-card>
+        <v-card-title>Actualizar Usuario</v-card-title>
+        <v-card-text>
+          <v-row width="100%">
+            <v-text-field
+              v-model="userToUpdate.nombre"
+              class="pa-2 ma-2"
+              label="Nombre"
+              placeholder="Escribe tu nombre"
+              outlined
+            />
+          </v-row>
+          <v-row width="100%">
+            <v-text-field
+              v-model="userToUpdate.apaterno"
+              class="pa-2 ma-2"
+              label="Apellido Paterno"
+              placeholder="Escribe tu apellido paterno"
+              outlined
+            />
+          </v-row>
+          <v-row width="100%">
+            <v-text-field
+              v-model="userToUpdate.amaterno"
+              class="pa-2 ma-2"
+              label="Apellido Materno"
+              placeholder="Escribe tu apellido materno"
+              outlined
+            />
+          </v-row>
+          <v-row width="100%">
+            <v-text-field
+              v-model="userToUpdate.direccion"
+              class="pa-2 ma-2"
+              label="Direccion"
+              placeholder="Escribe tu direccion"
+              outlined
+            />
+          </v-row>
+          <v-row width="100%">
+            <v-text-field
+              v-model="userToUpdate.telefono"
+              class="pa-2 ma-2"
+              label="Telefono"
+              placeholder="Escribe tu telefono"
+              outlined
+            />
+          </v-row>
+          <v-row>
+            <v-text-field
+              v-model="userToUpdate.email"
+              class="pa-2 ma-2"
+              label="Correo"
+              placeholder="Escribe tu correo"
+              outlined
+            />
+          </v-row>
+          <v-row width="100%">
+            <v-text-field
+              v-model="userToUpdate.password"
+              class="pa-2 ma-2"
+              label="Password"
+              placeholder="Escribe tu Password"
+              outlined
+              type="password"
+            />
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-col cols="6">
+            <v-btn block color="green" @click="actualizarUsuario">
+              <span style="text-transform: none; color:white;">Actualizar</span>
+            </v-btn>
+          </v-col>
+          <v-col cols="6">
+            <v-btn block color="red" @click="showUpdate = false">
+              <span style="text-transform: none; color:white;">Cancelar</span>
+            </v-btn>
+          </v-col>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-col>
 </template>
 
@@ -89,14 +244,37 @@ export default {
       usuarios: [],
       headers: [
         {
-          text: 'Email',
-          value: 'email',
+          text: 'Nombre',
+          value: 'nombre',
           align: 'center',
           sortable: true
         },
         {
-          text: 'Password',
-          value: 'password',
+          text: 'Apaterno',
+          value: 'apaterno',
+          align: 'center',
+          sortable: true
+        },
+        {
+          text: 'Amaterno',
+          value: 'amaterno',
+          align: 'center',
+          sortable: true
+        },
+        {
+          text: 'Direccion',
+          value: 'direccion',
+          align: 'center',
+          sortable: true
+        },
+        {
+          text: 'Telefono',
+          value: 'telefono',
+          align: 'center'
+        },
+        {
+          text: 'Email',
+          value: 'email',
           align: 'center',
           sortable: true
         },
@@ -109,7 +287,15 @@ export default {
       showDialog: false,
       email: null,
       password: null,
-      userToDelete: false
+      userToDelete: false,
+      showDelete: false,
+      nombre: null,
+      apaterno: null,
+      amaterno: null,
+      direccion: null,
+      telefono: null,
+      userToUpdate: {},
+      showUpdate: false
     }
   },
   computed: {
@@ -137,19 +323,62 @@ export default {
     registrarUsuario () {
       const url = '/register'
       const data = {
+        nombre: this.nombre,
+        apaterno: this.apaterno,
+        amaterno: this.amaterno,
+        direccion: this.direccion,
+        telefono: this.telefono,
         email: this.email,
-        password: this.password
+        password: this.password,
+        userToUpdate: this.userToUpdate
       }
       this.$axios.post(url, data)
         .then((res) => {
           console.log('res =>', res)
-          if (res.data.message === 'User created successfully') {
+          if (res.data.message === 'User registered successfully') {
             this.showDialog = false
             this.obtenerUsuarios()
           }
         })
         .catch((err) => {
           console.log('err =>', err)
+        })
+    },
+    deleteUser (user) {
+      this.userToDelete = user
+      this.showDelete = true
+      console.log('@@@ userToDelete =>', this.userToDelete)
+    },
+    borrarUsuario () {
+      const url = `/users/${this.userToDelete.email}`
+      this.$axios.delete(url)
+        .then((res) => {
+          console.log('@@@ res =>', res)
+          if (res.status === 204) {
+            this.showDelete = false
+            this.obtenerUsuarios()
+          }
+        })
+        .catch((err) => {
+          console.log('@@@ err =>', err)
+        })
+    },
+    updateUser (user) {
+      this.userToUpdate = user
+      this.showUpdate = true
+    },
+    actualizarUsuario () {
+      const url = `/users/${this.userToUpdate.email}`
+      this.$axios.put(url, this.userToUpdate)
+        .then((res) => {
+          console.log('@@@ res =>', res)
+          if (res.data.message === 'success') {
+            this.showUpdate = false
+            this.obtenerUsuarios()
+          }
+        })
+        .catch((err) => {
+          console.log('@@@ err =>', err)
         })
     }
   }
